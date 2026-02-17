@@ -26,5 +26,3 @@ def get_premarket():
         "volume_spikes": ["AMD", "META"]
     }
     return JSONResponse(content=data)
-#vino tell 
-#yes
