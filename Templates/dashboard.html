@@ -1,15 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>PremarketPilot Dashboard</title>
-    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1, h2 { color: #333; }
+        table { border-collapse: collapse; width: 50%; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+    </style>
 </head>
 <body>
     <h1>PremarketPilot Dashboard</h1>
-    <div class="container">
-        <div class="box" id="gappers"></div>
-        <div class="box" id="volume"></div>
-    </div>
-    <script src="/static/js/dashboard.js"></script>
+
+    <h2>Top Gappers</h2>
+    <table>
+        <tr><th>Symbol</th><th>Gap %</th><th>Volume</th></tr>
+        {% for g in gappers %}
+        <tr>
+            <td>{{ g.symbol }}</td>
+            <td>{{ g.gap }}</td>
+            <td>{{ g.volume }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Volume Spikes</h2>
+    <table>
+        <tr><th>Symbol</th><th>Change %</th><th>Volume</th></tr>
+        {% for v in volume_spikes %}
+        <tr>
+            <td>{{ v.symbol }}</td>
+            <td>{{ v.change }}</td>
+            <td>{{ v.volume }}</td>
+        </tr>
+        {% endfor %}
+    </table>
 </body>
 </html>
