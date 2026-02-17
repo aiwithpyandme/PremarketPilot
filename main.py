@@ -1,28 +1,73 @@
-from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, JSONResponse
-from fastapi.staticfiles import StaticFiles
+# main.py
+
+from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
-from fastapi.requests import Request
+from fastapi.responses import JSONResponse
+from pathlib import Path
 
-app = FastAPI()
+# -------------------------------
+# App initialization
+# -------------------------------
+app = FastAPI(title="PremarketPilot", description="Pre-market trading prep dashboard")
 
-# Serve static files (CSS/JS)
-app.mount("/static", StaticFiles(directory="static"), name="static")
+# -------------------------------
+# Template configuration
+# -------------------------------
+BASE_DIR = Path(__file__).resolve().parent  # absolute path to project folder
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
-# Templates folder
-templates = Jinja2Templates(directory="templates")
+# -------------------------------
+# Sample in-memory data (replace with DB later)
+# -------------------------------
+sample_gappers = [
+    {"symbol": "AAPL", "gap": 2.5, "volume": 100000},
+    {"symbol": "TSLA", "gap": 3.1, "volume": 150000},
+]
 
-# Frontend route
-@app.get("/", response_class=HTMLResponse)
+sample_volume_spikes = [
+    {"symbol": "NVDA", "change": 5.0, "volume": 500000},
+    {"symbol": "AMZN", "change": 4.2, "volume": 300000},
+]
+
+# -------------------------------
+# Routes
+# -------------------------------
+
+@app.get("/")
 def dashboard(request: Request):
-    return templates.TemplateResponse("dashboard.html", {"request": request})
+    """
+    Render the main dashboard page.
+    """
+    return templates.TemplateResponse(
+        "dashboard.html",
+        {
+            "request": request,
+            "gappers": sample_gappers,
+            "volume_spikes": sample_volume_spikes
+        }
+    )
 
-# API endpoint
 @app.get("/premarket")
-def get_premarket():
-    # Sample data for MVP
-    data = {
-        "gappers": ["AAPL", "TSLA", "NVDA"],
-        "volume_spikes": ["AMD", "META"]
-    }
-    return JSONResponse(content=data)
+def premarket_data():
+    """
+    Return JSON data for premarket gappers and volume spikes.
+    Can be used for API calls or AJAX frontend updates.
+    """
+    return JSONResponse(
+        {
+            "gappers": sample_gappers,
+            "volume_spikes": sample_volume_spikes
+        }
+    )
+
+# -------------------------------
+# Optional health check
+# -------------------------------
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+
+# -------------------------------
+# Run locally: uvicorn main:app --reload
+# On Render, Uvicorn runs automatically
+# -------------------------------
